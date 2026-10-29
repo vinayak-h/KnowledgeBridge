@@ -127,22 +127,23 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
     }
   }
 
+  /** Deletes a handover. Returns null on success, or the error message on failure. */
   async function removeHandover(handoverId) {
-    if (
-      !window.confirm(
-        'Delete this handover and all its work items, knowledge notes, and references? This cannot be undone.'
-      )
-    )
-      return;
     try {
       await api.deleteHandover(handoverId);
+    } catch (e) {
+      setError(e.message);
+      return e.message;
+    }
+    try {
       await list.loadPage(list.currentPage);
       await list.loadGlobalStats();
-      setNotice('Handover deleted.');
-      if (id === handoverId) setScreen('dashboard');
     } catch (e) {
       setError(e.message);
     }
+    setNotice('Handover deleted.');
+    if (id === handoverId) setScreen('dashboard');
+    return null;
   }
 
   return {

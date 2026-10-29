@@ -4,7 +4,10 @@ export default function Toast({ error, notice, onDismiss }) {
   if (!error && !notice) return null;
 
   return (
-    <div className={`toast ${error ? 'toast-error' : 'toast-success'}`}>
+    <div
+      className={`toast ${error ? 'toast-error' : 'toast-success'}`}
+      role={error ? 'alert' : 'status'}
+    >
       <span>
         {error ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
       </span>
