@@ -4,7 +4,7 @@
 
 ### Step 1: Start Backend (Terminal 1)
 ```powershell
-cd C:\personal\VoidStack-without-Docker\knowledgebridge\backend
+cd C:\knowledgebridge\backend
 $env:SERVER_PORT='8081'
 mvn spring-boot:run -DskipTests
 ```
@@ -17,7 +17,7 @@ Started KnowledgeBridgeApplication in 8.128 seconds
 
 ### Step 2: Start Frontend (Terminal 2)
 ```powershell
-cd C:\personal\VoidStack-without-Docker\knowledgebridge\frontend
+cd C:\knowledgebridge\frontend
 npm run dev
 ```
 
