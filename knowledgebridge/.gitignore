@@ -1,0 +1,34 @@
+
+# Java / Maven build output
+**/target/
+*.class
+*.jar
+*.war
+
+# Node.js / React
+**/node_modules/
+**/dist/
+**/build/
+npm-debug.log*
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Local application configuration
+application-local.properties
+application-dev.properties
+
+# IDE files
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
+
+# Logs and OS files
+*.log
+logs/
+.DS_Store
+Thumbs.db
