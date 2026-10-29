@@ -6,11 +6,13 @@ import {
   SEARCH_DEBOUNCE_MS,
 } from '../utils/constants.js';
 import { computeGlobalStats } from '../utils/handoverStats.js';
+import { useToast } from '../context/ToastContext.jsx';
 
 /**
  * Manages the paginated handover list, filters, and dashboard statistics.
  */
-export function useHandoverList({ onError }) {
+export function useHandoverList() {
+  const toast = useToast();
   const [pageData, setPageData] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -30,9 +32,8 @@ export function useHandoverList({ onError }) {
       );
       setPageData(result);
       setCurrentPage(pageNum);
-      onError('');
     } catch (e) {
-      onError(
+      toast.error(
         `${e.message}. Confirm MySQL and the Spring Boot backend are running, then refresh.`
       );
     } finally {
@@ -46,6 +47,7 @@ export function useHandoverList({ onError }) {
       setGlobalStats(computeGlobalStats(result));
     } catch (e) {
       console.error('Failed to load global stats:', e);
+      toast.error('Could not load dashboard statistics.');
     }
   }
 

@@ -58,6 +58,11 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 20, 50];
 export const SEARCH_DEBOUNCE_MS = 300;
 
+// Notification timing
+export const TOAST_DURATION_MS = 5000;
+export const TOAST_EXIT_MS = 180;
+export const TOAST_MAX_VISIBLE = 5;
+
 // API configuration
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/handovers';
 export const API_STATS_PAGE_SIZE = 1000;

@@ -17,7 +17,6 @@ export default function ConfirmDialog({
   busyLabel = 'Working…',
   cancelLabel = 'Cancel',
   busy = false,
-  error = '',
   onConfirm,
   onCancel,
 }) {
@@ -87,11 +86,6 @@ export default function ConfirmDialog({
         </div>
         <h2 id={titleId}>{title}</h2>
         <p id={messageId}>{message}</p>
-        {error && (
-          <p className="confirm-error" role="alert">
-            {error}
-          </p>
-        )}
         <div className="confirm-actions">
           <button
             ref={cancelRef}

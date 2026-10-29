@@ -4,12 +4,15 @@ import { blankForm, toFormState } from '../utils/handoverDefaults.js';
 import { buildHandoverPayload } from '../utils/handoverPayload.js';
 import { downloadBlob } from '../utils/download.js';
 import { validateHandoverForm } from '../utils/validation.js';
+import { useToast } from '../context/ToastContext.jsx';
 
 /**
  * Manages the handover editor form, save/export/delete actions.
  * `list` is the object returned by useHandoverList.
+ * User feedback is sent through the global toast API.
  */
-export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
+export function useHandoverEditor({ list, setScreen }) {
+  const toast = useToast();
   const [form, setForm] = useState(blankForm());
   const [id, setId] = useState(null);
   const [tab, setTab] = useState('work');
@@ -22,8 +25,6 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
     setFindings(null);
     setTab('work');
     setScreen('editor');
-    setError('');
-    setNotice('');
   }
 
   async function edit(handoverId) {
@@ -34,10 +35,8 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
       setFindings(null);
       setTab('work');
       setScreen('editor');
-      setError('');
-      setNotice('');
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
     }
   }
 
@@ -45,7 +44,6 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
     setForm(blankForm());
     setId(null);
     setFindings(null);
-    setError('');
   }
 
   function patch(key, value) {
@@ -74,16 +72,18 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
     }));
   }
 
-  async function save() {
+  /**
+   * Saves the handover. Returns the saved handover, or null on failure.
+   * Pass { notify: false } to suppress the success toast (used by other actions).
+   */
+  async function save({ notify = true } = {}) {
     const validation = validateHandoverForm(form);
     if (!validation.valid) {
-      setError(validation.error);
+      toast.error(validation.error);
       return null;
     }
 
     setSaving(true);
-    setError('');
-
     const payload = buildHandoverPayload(form);
 
     try {
@@ -92,10 +92,10 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
       setForm(toFormState(saved));
       await list.loadPage(list.currentPage);
       await list.loadGlobalStats();
-      setNotice('Handover saved successfully.');
+      if (notify) toast.success('Handover saved successfully.');
       return saved;
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
       return null;
     } finally {
       setSaving(false);
@@ -103,47 +103,47 @@ export function useHandoverEditor({ list, setError, setNotice, setScreen }) {
   }
 
   async function checkCompleteness() {
-    const saved = await save();
+    const saved = await save({ notify: false });
     if (!saved) return;
     try {
       setFindings(await api.checkCompleteness(saved.id));
-      setNotice('Completeness check updated.');
+      toast.success('Completeness check updated.');
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
     }
   }
 
   async function exportDoc() {
     if (!id) {
-      setError('Save this handover before exporting.');
+      toast.warning('Save this handover before exporting.');
       return;
     }
     try {
       const blob = await api.exportHandover(id);
       downloadBlob(blob, `knowledgebridge-handover-${id}.docx`);
-      setNotice('Your Word document is ready.');
+      toast.success('Your Word document is ready.');
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
     }
   }
 
-  /** Deletes a handover. Returns null on success, or the error message on failure. */
+  /** Deletes a handover. Returns true on success, false on failure (failure is reported as a toast). */
   async function removeHandover(handoverId) {
     try {
       await api.deleteHandover(handoverId);
     } catch (e) {
-      setError(e.message);
-      return e.message;
+      toast.error(e.message);
+      return false;
     }
     try {
       await list.loadPage(list.currentPage);
       await list.loadGlobalStats();
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
     }
-    setNotice('Handover deleted.');
+    toast.success('Handover deleted.');
     if (id === handoverId) setScreen('dashboard');
-    return null;
+    return true;
   }
 
   return {

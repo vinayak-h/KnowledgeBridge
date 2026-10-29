@@ -1,0 +1,124 @@
+/* Global toast notifications. Uses the kb-toast prefix to avoid legacy .toast rules in styles.css. */
+
+.kb-toast-viewport {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.kb-toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 10px;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(31, 41, 55, 0.14);
+  font-size: 14px;
+  line-height: 1.45;
+  animation: kb-toast-in 180ms ease-out;
+}
+
+.kb-toast-leaving {
+  animation: kb-toast-out 180ms ease-in forwards;
+}
+
+.kb-toast-icon {
+  display: flex;
+  padding-top: 1px;
+}
+
+.kb-toast-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.kb-toast-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.kb-toast-close:hover:not(:disabled),
+.kb-toast-close:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.kb-toast-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.kb-toast-success {
+  background: #effbf6;
+  border-color: #b9e6d0;
+  color: #1f6b4a;
+}
+
+.kb-toast-error {
+  background: #fff3f2;
+  border-color: #f2c2bd;
+  color: #a33b32;
+}
+
+.kb-toast-warning {
+  background: #fff8e6;
+  border-color: #f2d98f;
+  color: #7a5200;
+}
+
+.kb-toast-info {
+  background: #f1efff;
+  border-color: #d6d0fb;
+  color: #5747d5;
+}
+
+@keyframes kb-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kb-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 650px) {
+  .kb-toast-viewport {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-toast,
+  .kb-toast-leaving {
+    animation: none;
+  }
+}
